@@ -1,0 +1,16 @@
+input {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    outline: none;
+    }
+    
+    input:hover {
+        border-bottom-color: #333;
+    }
+    
+    .container-post {
+        background-color: #f0f8ff;
+        width: 100%;
+        height: 100%;
+        padding: 2em;
+    }
