@@ -2,23 +2,19 @@ import { LOGIN_SUCCESS, LOGIN_FAIL } from "../actions/types.js";
 
 const initialState = {
     authenticated: false,
-    user: null
+    data: null
   };
 
   
   const authReducer = (state = initialState, action) => {
     switch (action.type) {
       case LOGIN_SUCCESS:
-        return {
-          ...state,
-          authenticated: true,
-          user: action.payload
-        };
+        return { ...state, authenticated: true, data: action.payload };
       case LOGIN_FAIL:
         return {
           ...state,
           authenticated: false,
-          user: null
+          data: null
         };
       default:
         return state;
