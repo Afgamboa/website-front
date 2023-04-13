@@ -1,31 +1,29 @@
-import { LOGIN_SUCCESS, LOGIN_FAIL } from "../actions/types.js";
+import { SET_POSTS, DELETE_POST , ADD_POST } from "../actions/types.js";
 
 const initialState = {
-    posts: [],
-    authenticated: false,
-    user: null
-  };
+  posts: [],
+};
 
-  
-  const authReducer = (state = initialState, action) => {
-    switch (action.type) {
-      case LOGIN_SUCCESS:
-        return {
-          ...state,
-          authenticated: true,
-          user: action.payload
-        };
-      case LOGIN_FAIL:
-        return {
-          ...state,
-          authenticated: false,
-          user: null
-        };
-      default:
-        return state;
-    }
-  };
+const postReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case SET_POSTS:
+      return {
+        ...state,
+        posts: action.payload,
+      };
+      case ADD_POST:
+      return {
+        ...state,
+        posts: [...state, action.payload],
+      };
+    case DELETE_POST:
+      return {
+        ...state,
+        posts: state.posts.filter(post => post._id !== action.payload._id),
+      };
+    default:
+      return state;
+  }
+};
 
-  export default authReducer;
-
-  
+export default postReducer;

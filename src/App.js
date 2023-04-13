@@ -8,9 +8,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" Component={Login} />
+        <Route path="/" Component={Login} />
         <Route path="/welcome" Component={WelcomeMessage} />  
-
       </Routes>
     </Router>
   );

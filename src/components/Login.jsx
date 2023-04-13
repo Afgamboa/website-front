@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { connect, useDispatch  } from 'react-redux';
+import { connect, useDispatch, useSelector  } from 'react-redux';
 import { AuthUser } from '../redux/actions/authActions.js';
+import { useNavigate } from 'react-router-dom';
 import "./css/Login.css"
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState('');
-
+  const history = useNavigate();
 
   const dispatch = useDispatch();
   const handleEmailChange = (event) => {
@@ -32,13 +33,9 @@ const Login = () => {
       return;
     }
     try {
-      const response = await dispatch(AuthUser(email, password)); // llamamos a la acción authUser y esperamos el token de retorno
-      const token = response.token;
-      const userId = response.userId;
-      if (token) {
-        window.localStorage.setItem('token', token); // guardamos el token en el localStorage
-        window.location.href = "/welcome"; // redirigimos al usuario a la página de bienvenida
-      }
+      await dispatch(AuthUser(email, password));
+      history('/welcome');
+
     } catch (error) {
       setErrors({ submit: error.message });
     }
