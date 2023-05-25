@@ -8,16 +8,15 @@ const AuthUser = (email, password) => async (dispatch) => {
         'Content-Type': 'application/json'
       },
     });
-    localStorage.setItem("token", response.data.token);
-    dispatch({
+    return dispatch({
       type: LOGIN_SUCCESS,
       payload: response.data
     });
 
   } catch (error) {
-    dispatch({
+    return dispatch({
       type: LOGIN_FAIL,
-      payload: error.message
+      payload: error.response.data.message
     });
   }
 };

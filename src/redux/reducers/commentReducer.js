@@ -1,4 +1,9 @@
-import { GET_COMMENT, DELETE_COMMENT, ADD_COMMENT, ADD_REPLY } from "../actions/types.js";
+import {
+  GET_COMMENT,
+  DELETE_COMMENT,
+  ADD_COMMENT,
+  ADD_REPLY,
+} from "../actions/types.js";
 
 const initialState = {
   comments: [],
@@ -15,12 +20,12 @@ const authReducer = (state = initialState, action) => {
     case ADD_COMMENT:
       return {
         ...state,
-        comments: [action.payload, ...state.comments]
+        comments: [action.payload, ...state.comments],
       };
-      case ADD_REPLY:
+    case ADD_REPLY:
       return {
         ...state,
-        comments: [...state, action.payload]
+        comments: [...state, action.payload],
       };
     default:
       return state;

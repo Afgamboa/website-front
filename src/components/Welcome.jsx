@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from "react";
-import Comment from "./Comment";
+import Posts from "./Posts";
+import PostUser from "./PostUser";
 import "./css/Welcome.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  fetchPosts,
-  createPost,
-  removePost,
-} from "../redux/actions/postActions.js";
+import { fetchPosts, createPost } from "../redux/actions/postActions.js";
 
 const Welcome = () => {
   const [newPostContent, setNewPostContent] = useState("");
   const dispatch = useDispatch();
-  const { posts } = useSelector((state) => state.posts);
+  const { data } = useSelector((state) => state.auth);
   const history = useNavigate();
-  const userId = localStorage.getItem("userId");
-  const [showComments, setShowComments] = useState(false);
+  const userId = data.userId;
+  const token = data.token;
+  const [errors, setErrors] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    dispatch(fetchPosts());
+    dispatch(fetchPosts(token));
   }, [dispatch]);
-  console.log("first", posts);
+
   const handleNewPostContentChange = (event) => {
     setNewPostContent(event.target.value);
   };
@@ -28,24 +27,28 @@ const Welcome = () => {
   const handleCreatePost = async (event) => {
     event.preventDefault();
     try {
-      dispatch(
-        createPost({
-          content: newPostContent,
-          author: userId,
-        })
+      const res = await dispatch(
+        createPost(
+          {
+            content: newPostContent,
+          },
+          token,
+          userId
+        )
       );
-      setNewPostContent("");
-      dispatch(fetchPosts());
+      if (res && res.status === 201) {
+        setNewPostContent("");
+        setSuccess(res.data.message);
+        setTimeout(() => {
+          setSuccess("");
+          window.location.reload(true);
+        }, 2500);
+      }
     } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const handleDeletePost = async (postId) => {
-    try {
-      dispatch(removePost(postId));
-      dispatch(fetchPosts());
-    } catch (error) {
+      setErrors(error.message);
+      setTimeout(() => {
+        setErrors("");
+      }, 2500);
       console.log(error.message);
     }
   };
@@ -55,151 +58,67 @@ const Welcome = () => {
     history("/");
   };
 
-  const toggleComments = (postId) => {
-    setShowComments({
-      ...showComments,
-      [postId]: !showComments[postId],
-    });
-  };
-
   return (
     <div className="container-post">
-      <form onSubmit={handleCreatePost} className="create-post-form">
-        <input
-          className="form-control rounded-pill"
-          value={newPostContent}
-          onChange={handleNewPostContentChange}
-          placeholder="Que estas pensando?"
-        />
-
-        <div className="form-group">
-          <button type="submit" className="btn btn-primary btn-md">
+      <div className="create-post row">
+        <div className="col">
+          <input
+            className="form-control rounded-pill"
+            value={newPostContent}
+            onChange={handleNewPostContentChange}
+            placeholder="Que estas pensando?"
+          />
+        </div>
+        <div className="col-md-5">
+          <button
+            type="submit"
+            className="btn btn-dark newPost"
+            onClick={handleCreatePost}
+          >
             Publicar
           </button>
+        </div>
+        <div className="col">
           <button
             type="button"
-            className="btn btn-dark btn-md ml-2"
+            className="btn btn-danger closed"
             onClick={handleLogout}
           >
             Cerrar sesion
           </button>
         </div>
-      </form>
+      </div>
       <hr />
-      {
-        <div>
-          <h2 className="text-center">Mis publicaciones</h2>
-          <div className="my-posts">
-            {posts.length > 0 ? (
-              posts
-                .filter((post) => post.author._id === userId)
-                .map((post) => (
-                  <>
-                    <div className="row">
-                      <div className="col-md-8">
-                        <label key={post._id} className="card-text">
-                          {post.content}
-                        </label>
-                        <button
-                          onClick={toggleComments}
-                          className="show-comment btn btn-link"
-                        >
-                          {showComments
-                            ? "Ocultar comentarios"
-                            : "Ver comentarios"}
-                        </button>
-                        {showComments &&
-                          post.comments &&
-                          post.comments.length > 0 && (
-                            <div className="comments">
-                              <h6 className="text-muted">Comentarios</h6>
-                              <ul className="comment-list">
-                                {post.comments.map((comment) => (
-                                  <li key={comment._id}>
-                                    <div className="comment">
-                                      <label className="comment-text">
-                                        {comment.content}
-                                      </label>
-                                    </div>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                      </div>
-                      <div className="col-md-3 d-flex align-items-center justify-content-end">
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDeletePost(post._id)}
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ))
-            ) : (
-              <div className="alert alert-info text-center">
-                No tienes publicaciones aun
-              </div>
-            )}
-          </div>
-
-          <h2 className="text-center">Otras publicaciones</h2>
-          <div className="aling-items-start">
-            {posts &&
-              posts
-                .filter((post) => post.author._id !== userId)
-                .map((post) => (
-                  <>
-                    <div key={post._id}>
-                      <div className="d-flex">
-                        <div className="text-muted">
-                          {post.author && (
-                            <h6 key={post.author._id} className="ml-3">
-                              {post.author.username}
-                            </h6>
-                          )}
-                        </div>
-                      </div>
-                      <p className="card-text">{post.content}</p>
-                      <Comment postId={post._id} userId={userId}/>
-                    </div>
-                    <button
-                      onClick={() => toggleComments(post._id)}
-                      className="show-comment btn btn-link"
-                    >
-                      {showComments[post._id] ? (
-                        <i className="bi bi-eye-slash"></i>
-                      ) : (
-                        <i className="bi bi-eye"></i>
-                      )}
-                    </button>
-                        <hr />
-                    {showComments[post._id] &&
-                      post.comments &&
-                      post.comments.length > 0 && (
-                        <div className="comments">
-                          <h6 className="text-muted">Comentarios</h6>
-                          <ul className="comment-list">
-                            {post.comments.map((comment) => (
-                              <li key={comment._id}>
-                                <div className="comment">
-                                  <label className="comment-text">
-                                    {comment.content}
-                                  </label>
-                                </div>
-                                <hr />
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                  </>
-                ))}
-          </div>
+      {errors && (
+        <div
+          className="alert alert-danger alert-sm mt-3 mb-4"
+          style={{ width: 400, margin: "auto" }}
+        >
+          {errors}
         </div>
-      }
+      )}
+      {success && (
+        <div
+          className="alert alert-success alert-sm mt-3 mb-4"
+          style={{
+            width: 400,
+            height: 50,
+            margin: "auto",
+            textAlign: "center",
+          }}
+        >
+          <h6>{success}</h6>
+        </div>
+      )}
+      <div className="row mx-2" style={{ width: "99%" }}>
+        <div className="col post-container">
+          <Posts />
+        </div>
+
+        <div className="col post-container">
+          <PostUser />
+        </div>
+      </div>
     </div>
   );
 };

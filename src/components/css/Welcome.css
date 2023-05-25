@@ -1,16 +1,77 @@
-input {
-    border: none;
-    border-bottom: 1px solid #ccc;
-    outline: none;
-    }
-    
-    input:hover {
-        border-bottom-color: #333;
-    }
-    
-    .container-post {
-        background-color: #f0f8ff;
-        width: 100%;
-        height: 100%;
-        padding: 2em;
-    }
+body {
+  background-color: rgb(24, 25, 22)
+}
+
+.container-post {
+  margin-top: 1em;
+}
+
+.create-post {
+  width: 1100px;
+  margin-left: 10%;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #5395eb;
+}
+
+.create-post input {
+  border: none;
+  border-radius: 20px;
+  width: 400px;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 15px;
+
+}
+
+.closed,
+.newPost {
+  font-weight: 600;
+  border-radius: 20px;
+  width: 150px;
+}
+
+.post-container {
+  background-color: rgb(33, 34, 32);
+  color: white;
+  margin: auto;
+  height: 465px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.post-card {
+  background-color: rgb(45, 46, 45);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #5395eb;
+}
+
+.myPost {
+  margin: auto;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.post-card {
+  margin-top: 10px;
+  width: 95%;
+}
+
+.post-content {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.comment-text {
+  opacity: 0.8;
+  text-align: justify;
+}
+
+.comment-user {
+  font-weight: 500;
+}

@@ -4,37 +4,37 @@ import "./css/Comment.css";
 import { fetchComments, addComment } from "../redux/actions/commentActions";
 import { useDispatch, useSelector } from "react-redux";
 
-const token = localStorage.getItem("token");
-
 const Comment = (props) => {
   const postId = props.postId;
   const userId = props.userId;
   const dispatch = useDispatch();
-  const { comments } = useSelector((state) => state.comment);
   const [newComment, setNewComment] = useState("");
   const [replyInputValue, setReplyInputValue] = useState("");
-
-  useEffect(() => {
-    dispatch(fetchComments(postId));
-  }, [dispatch]);
+  const [errors, setErrors] = useState("");
+  const { data } = useSelector((state) => state.auth);
+  const token = data.token;
 
   const handleSubmit = async (event) => {
+    const errors = {}
     event.preventDefault();
     try {
-      dispatch(
+      await dispatch(
         addComment({
+          content: newComment,
           author: userId,
           post: postId,
-          content: newComment,
         })
       );
       setNewComment("");
-      dispatch(fetchComments(postId));
+      window.location.reload(true)
     } catch (error) {
-      console.log(error.message);
+      errors.comment = error.message
+      setErrors(errors);
+      setTimeout(() => {
+        setErrors("");
+      }, 2500);
     }
   };
-
   const handleReplySubmit = async (commentId) => {
     if (!replyInputValue.trim()) {
       return;
@@ -75,15 +75,17 @@ const Comment = (props) => {
     }
   };
   return (
-    <div className="comment-form-container">
-      <form className="comment-form" onSubmit={handleSubmit}>
-        <input
-          className="form-control-sm comment-input rounded-pill"
-          value={newComment}
-          onChange={(event) => setNewComment(event.target.value)}
-          placeholder="Escribe un comentario..."
-        />
-      </form>
+    <div className="input-group">
+      <input
+        className={`comment-input ${errors.comment ? "is-invalid" : ""}`}
+        value={newComment}
+        onChange={(event) => setNewComment(event.target.value)}
+        placeholder="Escribe un comentario..."
+      />
+      <button className="btn " style={{backgroundColor: 'white', height: '30px'}} onClick={handleSubmit}>
+        <i className="bi bi-send-check-fill " style={{color: 'black'}}></i>
+      </button>
+      {errors && errors.comment && <div className="invalid-feedback">{errors.comment}</div>}
     </div>
   );
 };

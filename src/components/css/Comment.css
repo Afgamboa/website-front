@@ -1,37 +1,16 @@
-
 input {
     border: none;
     border-bottom: 1px solid #ccc;
     outline: none;
-    }
-    
-    input:hover {
-        border-bottom-color: #333;
-    }
+}
 
-    .comment-input{
-        width: 70%;
-    }
+input:hover {
+    border-bottom-color: #333;
+}
 
-    .show-comment {
-        background-color: transparent;
-        color: rgba(0, 0, 0, 0.6);
-        border: none;
-        cursor: pointer;
-    }
-      
-    .comment-form-container {
-        max-width: 600px;
-        margin-bottom: 10px;
-        align-items: start;
-        
-      }
-    
-      .comment-input{
-
-        width: 60%;
-      }
-
-      
-      
-      
+.comment-input {
+    width: 60%;
+    border: none;
+    border-radius: 20px;
+    height: 30px;
+}
